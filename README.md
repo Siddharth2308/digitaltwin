@@ -8,7 +8,7 @@ The current setup has 2 implementations one is digital twin of the live machine 
 <br>
 </br>
 
-> During tests at the Kerala Lab we spotted significant error accumulation when both the axis are moved parallel especially at higher speeds i.e. motion plans at speeds < 100 mm/s. This is mostly likely due to belt slip and can be solved by proper velocity profilining. This might not be a requirement right now as the operational speeds of the ultrasonic limit our max operational speeds. But the microsegment generator needs to take into consideration the physical model of the system to plan for trajectories  and check for validity before execution as there is no velocity profile check at the controller end.
+> During tests at the Kerala Lab we spotted significant error accumulation when both the axis are moved parallel especially at higher speeds i.e. motion plans at speeds < 100 mm/s. This is most likely due to belt slip and can be solved by proper velocity profiling. This might not be a requirement right now as the operational speeds of the ultrasonic knife limit our max operational speeds. But the microsegment generator needs to take into consideration the physical model of the system to plan for trajectories  and check for validity before execution as there is no velocity profile check at the controller end.
 
 ## Power design reports
 
