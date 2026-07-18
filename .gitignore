@@ -1,0 +1,14 @@
+# colcon build artifacts
+colcon_ws/build/
+colcon_ws/install/
+colcon_ws/log/
+
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# simulator run outputs
+colcon_ws/src/kerala_bot_sim/output/*.csv
+colcon_ws/src/kerala_bot_sim/output/*.png
+colcon_ws/src/kerala_bot_sim/output/*.gif

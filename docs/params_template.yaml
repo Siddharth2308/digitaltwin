@@ -1,0 +1,73 @@
+# Per-axis physical parameters for the trajectory-feasibility simulator.
+# Fill `value` as you measure. `source`: cad | datasheet | measure. Leave estimates in
+# `value` with source: measure until the bench test replaces them; keep the estimate in a
+# comment so you can see how far off the guess was.
+# Units are SI unless noted (radians, metres, kg, N, seconds).
+
+common:
+  gravity: 9.81                 # m/s^2
+
+  driver:
+    model: DM6542               # digital stepper driver (Leadshine DM-class)
+    max_current_A: 4.2          # driver PEAK rating. The ACTUAL running current is set by the
+                                # current DIP switches -- CONFIRM. If those switches are off you
+                                # may be running FAR below 4.2A, which directly starves torque and
+                                # is a prime suspect for the high-speed lost steps.
+    set_current_A:              # source: confirm (read the driver's current DIP table)
+    supply_voltage_V:           # source: confirm -- DM-class run ~20-50 VDC; higher bus voltage
+                                # = much better torque retention at high speed than a hobby driver
+
+  stepper:
+    full_steps_per_rev: 200     # assumes a 1.8 deg motor -- CONFIRM the motor's step angle
+    pulses_per_rev: 25000       # controller pulses for one rev (this driver, all DIPs off)
+    microstep: 125              # derived: pulses_per_rev / full_steps_per_rev (very fine)
+    rotor_teeth_Nr: 50          # standard for a 1.8 deg hybrid stepper; drives the pole-slip model
+                                # (electrical angle = Nr * mechanical angle). Microstepping does
+                                # NOT change this -- slip still happens at the full-step pole level.
+    rotor_inertia_Jm:           # kg*m^2   source: datasheet
+
+  belt:
+    pitch_mm: 2.0               # GT2 assumed; source: spec  -> confirm
+    pulley_teeth: 20            # source: spec  -> confirm
+    # r (pitch radius, m) is derived: (pulley_teeth * pitch_mm/1000) / (2*pi)
+
+# ---------------------------------------------------------------------------
+# X axis = tool head sliding along the crossbeam (lighter of the two)
+axis_x:
+  moving_mass_m:                # kg       source: cad   (tool head + its carriage)
+  pulley_pitch_radius_r:        # m        source: derived from belt block (or measure)
+  friction_coulomb_Fc:          # N        source: measure (Test 3, breakaway)
+  friction_viscous_bvisc: 0.0   # N/(m/s)  source: measure (Test 3; 0 is an acceptable start)
+  belt_stiffness_k:             # N/m      source: measure (Test 4/5)  -- may be k(position)
+  belt_damping_c:               # N/(m/s)  source: measure (Test 5, ring-down)
+  motor_bearing_damping_bm: 0.0 # N*m/(rad/s) source: measure (often negligible)
+  torque_peak_holding:          # N*m      source: datasheet (T_pk at zero speed)
+  # torque-speed curve: list of [speed_rad_s, torque_Nm] points from Test 6 (empirical anchor)
+  torque_speed_curve: []        # source: measure
+  travel_limit_m: 1.2           # from URDF x_axis_to_x_axis_gantry limit
+
+# ---------------------------------------------------------------------------
+# Y axis = moves the ENTIRE X gantry (heaviest; expected worst offender)
+axis_y:
+  moving_mass_m:                # kg       source: cad   (X gantry assembly + tool head + Y carriage)
+  pulley_pitch_radius_r:        # m        source: derived (or measure)
+  friction_coulomb_Fc:          # N        source: measure (Test 3)
+  friction_viscous_bvisc: 0.0   # N/(m/s)  source: measure (Test 3)
+  belt_stiffness_k:             # N/m      source: measure (Test 4/5)
+  belt_damping_c:               # N/(m/s)  source: measure (Test 5)
+  motor_bearing_damping_bm: 0.0 # N*m/(rad/s) source: measure
+  torque_peak_holding:          # N*m      source: datasheet
+  torque_speed_curve: []        # source: measure (Test 6)
+  travel_limit_m: 0.94          # from URDF y2_to_x_axis limit (-0.47..0.47)
+
+# ---------------------------------------------------------------------------
+# Validation dataset from Test 7 (lost-step boundary). Not a model parameter --
+# this is the ground truth the tuned model must reproduce. Fill after bench runs.
+validation_lost_step_map:
+  # - axis: x|y|diagonal
+  #   peak_velocity: <m/s>
+  #   acceleration: <m/s^2>
+  #   cycles: <N>
+  #   net_offset_mm: <measured>
+  #   verdict: pass|fail
+  []

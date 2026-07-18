@@ -1,0 +1,22 @@
+# Maps machine/bed coordinates (what the simulator works in, metres) to the URDF joint
+# values (what RViz displays). Linear: joint = joint_min + (pos-bed_min)/(bed_max-bed_min)
+#                                              * (joint_max-joint_min)
+# Defaults below make X ~1:1 and shift Y so 0..0.94 m of travel maps onto the -0.47..0.47
+# joint range from robot.xacro. Adjust bed_min/bed_max to your real workspace, and swap the
+# 'source' column (x_act/x_cmd) if you want to play the commanded path instead of actual.
+
+x:                                  # machine X = tool head along the crossbeam
+  joint: x_axis_to_x_axis_gantry
+  source: x_act                     # x_act (predicted) or x_cmd (intended)
+  bed_min: 0.0
+  bed_max: 1.2
+  joint_min: 0.0
+  joint_max: 1.2
+
+y:                                  # machine Y = gantry moving along the rails
+  joint: y2_to_x_axis
+  source: y_act
+  bed_min: 0.0
+  bed_max: 0.94
+  joint_min: -0.47
+  joint_max: 0.47

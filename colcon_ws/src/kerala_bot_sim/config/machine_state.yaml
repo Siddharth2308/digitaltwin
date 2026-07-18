@@ -1,0 +1,49 @@
+# Live machine-state visualization config.
+#
+# The state_listener node subscribes to your machine's position feedback, scales each axis
+# from its physical workspace [machine_min, machine_max] onto the URDF joint's
+# [joint_min, joint_max], and publishes /joint_states so RViz shows the real machine pose.
+#
+# Set machine_min/machine_max to YOUR machine's travel per axis. Disable an axis
+# (enabled: false) until its URDF joint exists -- z is off by default because the z_axis
+# subassembly has not been added to robot.xacro yet.
+
+input:
+  # How position feedback arrives. One of:
+  #   point          : single topic, geometry_msgs/Point         (.x .y .z)
+  #   point_stamped  : single topic, geometry_msgs/PointStamped  (.point.x/.y/.z)
+  #   float_axes     : one std_msgs/Float64 topic PER axis (set each axis's `topic` below)
+  mode: point
+  topic: /machine/position     # used by point / point_stamped modes
+  units: m                     # m | mm  -- units of the INCOMING values
+
+publish_rate_hz: 30            # /joint_states publish rate (independent of input rate)
+clamp_to_limits: true          # clamp scaled values into the joint range (safety)
+
+axes:
+  x:                           # tool head along the crossbeam
+    enabled: true
+    joint: x_axis_to_x_axis_gantry
+    machine_min: 0.0
+    machine_max: 1.2
+    joint_min: 0.0
+    joint_max: 1.2
+    topic: /machine/x          # used only in float_axes mode
+
+  y:                           # gantry along the rails
+    enabled: true
+    joint: y2_to_x_axis
+    machine_min: 0.0
+    machine_max: 0.94
+    joint_min: -0.47
+    joint_max: 0.47
+    topic: /machine/y          # used only in float_axes mode
+
+  z:                           # vertical -- ENABLE once z_axis is in the URDF
+    enabled: false
+    joint: null
+    machine_min: 0.0
+    machine_max: 0.2
+    joint_min: 0.0
+    joint_max: 0.2
+    topic: /machine/z          # used only in float_axes mode
